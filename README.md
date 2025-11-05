@@ -1,5 +1,5 @@
-# ase25-assignment02
-# Simple mutational fuzzer
+## ase25-assignment02
+### Simple mutational fuzzer
 
 The fuzzer mutates a valid seed file using custom mutators and sends the generated input strings to the specified
 command line program, monitoring their output and exit codes.
