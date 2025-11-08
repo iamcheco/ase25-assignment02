@@ -1,0 +1,58 @@
+Name: Vedansh Shrivastava
+Matriculation Number: 1998870
+Advanced Software Engineering - Assignment 2
+
+Excercise 2.1 Mutational Fuzzer
+I tested it on Windows and Command Prompt.
+Reads a valid seed (seed.html).
+I found three distinct bug classes.
+
+
+Bug class 1 — Opening tag name too long
+
+Crash file: crash_iter_015.log
+Log:
+exit=-1073741819
+Error: Opening tag name is longer than 16 characters
+
+crash_iter_015.html
+<!DOCTYPE html>
+<html>
+  <head><title>Seed</title>t</head>
+  <body>
+    <h1>Hello</h1>
+    <p>Sample seed HTML for fuzzing.</p>
+  </bod<!--comment-->y>
+</html>
+r fuzz
+
+Bug class 2 — Tag starts with more than one '<'
+Crash file: crash_iter_106.log
+Log:
+exit=-1073741819
+Error: Tag starts with more than one '<'
+
+crash_iter_106.html
+<<!--comment-->!DOCTYPE html>
+<html>
+  <head><title>Seed</title></head>
+  <body>
+    <h1>Hello</h1>
+    <p>Sample seed HTML for fuzzing.</p>
+  </body>
+</html>
+
+Bug class 3 — Content between tags exceeds 64 characters
+Crash file: crash_iter_410.log
+Log:
+exit=-1073741819
+Error: Content between tags exceeds 64 characters
+crash_iter_410.html
+<!DOCTYPE html>
+<html>
+  <head><title>Seed</title></head>
+  <body>
+    <h1>Hello</h1>
+    <p>Sam<a hre<a href='#'>link</a>f='#<!--comment-->'>link</a>ple seed HTML for fuzzing.</p>
+  </body>
+</html>
