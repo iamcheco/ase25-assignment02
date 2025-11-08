@@ -1,0 +1,49 @@
+# grammar.txt
+# Simple arithmetic expression grammar (extended BNF)
+# Non-terminals are in angle brackets <...>. Terminals are literal characters/strings.
+# This grammar supports:
+# - decimal integer literals
+# - binary operators + and *
+# - parentheses
+# - optional unary minus
+# It also includes small "malformed" productions to produce slightly broken inputs.
+
+<Start>      ::= <Expr> 
+
+# Expressions: support left-associative + over Terms
+<Expr>       ::= <Expr> "+" <Term> | <Term>
+
+# Terms: support left-associative * over Factors
+<Term>       ::= <Term> "*" <Factor> | <Factor>
+
+# Factor: integer, parenthesized expression, or unary minus
+<Factor>     ::= <Integer> 
+               | "(" <Expr> ")" 
+               | "-" <Factor>
+
+# Integer: one or more decimal digits (no sign here)
+<Integer>    ::= <NonZeroDigit> <Digits> | "0"
+<Digits>     ::= <Digit> <Digits> | <Digit>
+<Digit>      ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<NonZeroDigit>::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+# ---------- Malformed / fuzzing-friendly productions ----------
+# These are optional alternate productions to generate slightly broken inputs.
+# A grammar-based fuzzer can flip between the "valid" rules above and these
+# to create inputs that test parser robustness.
+
+# Missing operand after operator (e.g., "5 +")
+<Expr>       ::= <Expr> "+"                # (malformed: trailing '+')
+
+# Extra operator sequences (e.g., "5 + * 3")
+<Term>       ::= <Term> "*" <Factor> "*" <Factor>  # (malformed: extra '*')
+
+# Unmatched parentheses (missing closing paren)
+<Factor>     ::= "(" <Expr>                   # (malformed: no closing ')')
+
+# Very long content between tags is not applicable here (arith grammar),
+# but one could add very long integer generation by repeating digits.
+
+# Note:
+# A generator should randomly choose between the normal (valid) productions
+# and the marked malformed ones to create both valid inputs and small glitches.
